@@ -2,32 +2,41 @@ using UnityEngine;
 
 public class PlataformaPatrulla : MonoBehaviour
 {
+    #region Fields
+
     [Header("Configuración de Movimiento")]
-    public bool activo = false; // Solo se mueve si marcas esto en el nivel
+    public bool activo = false;
     public float velocidad = 3f;
-    public float distanciaMovimiento = 5f; // Cuánto se mueve desde el inicio
-    public bool moverEnX = true; // Si es falso, se moverá en Y
+    public float distanciaMovimiento = 5f;
+    public bool moverEnX = true;
 
     private Vector3 posicionInicial;
     private int direccion = 1;
 
-    void Start()
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
+
+    private void Start()
     {
         posicionInicial = transform.position;
     }
 
-    void Update()
+    private void Update()
     {
-        if (!activo) return;
+        if (!activo)
+        {
+            return;
+        }
 
-        // Calculamos el límite basado en la posición inicial
         float limiteDerecho = posicionInicial.x + distanciaMovimiento;
         float limiteIzquierdo = posicionInicial.x - distanciaMovimiento;
 
-        // Movimiento simple
         transform.Translate(Vector2.right * direccion * velocidad * Time.deltaTime);
 
-        // Comprobar si alcanzó los límites para dar la vuelta
         if (transform.position.x >= limiteDerecho)
         {
             direccion = -1;
@@ -37,4 +46,12 @@ public class PlataformaPatrulla : MonoBehaviour
             direccion = 1;
         }
     }
+
+    #endregion
+
+    #region Public Methods
+    #endregion
+
+    #region Private Methods
+    #endregion
 }

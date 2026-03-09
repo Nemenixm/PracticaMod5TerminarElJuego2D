@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuController : MonoBehaviour
 {
+    #region Fields
+
     [Header("Panels")]
     [SerializeField] private GameObject panelAjustes;
     [SerializeField] private GameObject panelSalir;
@@ -12,55 +14,89 @@ public class MainMenuController : MonoBehaviour
     [Header("Scene To Load")]
     [SerializeField] private string gameSceneName = "game";
 
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
+
     private void Awake()
     {
-        // Arranca con todo cerrado (por si acaso)
-        if (panelAjustes != null) panelAjustes.SetActive(false);
-        if (panelSalir != null) panelSalir.SetActive(false);
+        if (panelAjustes != null)
+        {
+            panelAjustes.SetActive(false);
+        }
+
+        if (panelSalir != null)
+        {
+            panelSalir.SetActive(false);
+        }
+
+        if (panelInstrucciones != null)
+        {
+            panelInstrucciones.SetActive(false);
+        }
     }
 
-    // BOTÓN: JUGAR
+    #endregion
+
+    #region Public Methods
+
     public void OnPlay()
     {
-        // Si venías de pausa, por si acaso:
         Time.timeScale = 1f;
-
         SceneManager.LoadScene(gameSceneName);
     }
 
-    // BOTÓN: AJUSTES
     public void OnOpenAjustes()
     {
-        if (panelAjustes != null) panelAjustes.SetActive(true);
+        if (panelAjustes != null)
+        {
+            panelAjustes.SetActive(true);
+        }
     }
 
     public void OnCloseAjustes()
     {
-        if (panelAjustes != null) panelAjustes.SetActive(false);
+        if (panelAjustes != null)
+        {
+            panelAjustes.SetActive(false);
+        }
     }
-    //BOTÓN INSTRUCCIONES
+
     public void OnOpenInstrucciones()
     {
-        if (panelInstrucciones != null) panelInstrucciones.SetActive(true);
+        if (panelInstrucciones != null)
+        {
+            panelInstrucciones.SetActive(true);
+        }
     }
 
     public void OnCloseInstrucciones()
     {
-        if (panelInstrucciones != null) panelInstrucciones.SetActive(false);
+        if (panelInstrucciones != null)
+        {
+            panelInstrucciones.SetActive(false);
+        }
     }
 
-    // BOTÓN: SALIR
     public void OnOpenSalir()
     {
-        if (panelSalir != null) panelSalir.SetActive(true);
+        if (panelSalir != null)
+        {
+            panelSalir.SetActive(true);
+        }
     }
 
     public void OnCloseSalir()
     {
-        if (panelSalir != null) panelSalir.SetActive(false);
+        if (panelSalir != null)
+        {
+            panelSalir.SetActive(false);
+        }
     }
 
-    // Opcional: confirmar salida desde PanelSalir
     public void OnQuitGame()
     {
 #if UNITY_EDITOR
@@ -69,4 +105,9 @@ public class MainMenuController : MonoBehaviour
         Application.Quit();
 #endif
     }
+
+    #endregion
+
+    #region Private Methods
+    #endregion
 }

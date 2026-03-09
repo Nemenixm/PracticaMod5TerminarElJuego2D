@@ -4,7 +4,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Camera))]
 public class camera : MonoBehaviour
 {
-      [Header("Target")]
+    #region Fields
+
+    [Header("Target")]
     public Transform target;
 
     [Header("Follow")]
@@ -13,13 +15,29 @@ public class camera : MonoBehaviour
 
     private Vector3 velocity = Vector3.zero;
 
-    void LateUpdate()
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
+
+    private void LateUpdate()
     {
-        if (!target) return;
+        if (target == null)
+        {
+            return;
+        }
 
         Vector3 desiredPosition = target.position + offset;
         transform.position = Vector3.SmoothDamp(transform.position, desiredPosition, ref velocity, smoothTime);
-        // Si quieres que rote mirando al player:
-        // transform.LookAt(target);
     }
+
+    #endregion
+
+    #region Public Methods
+    #endregion
+
+    #region Private Methods
+    #endregion
 }

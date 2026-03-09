@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class AudioSettingsController : MonoBehaviour
 {
+    #region Fields
+
     [Header("Audio Sources")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource sfxSource;
@@ -12,7 +14,7 @@ public class AudioSettingsController : MonoBehaviour
     [SerializeField] private Slider sliderMusic;
     [SerializeField] private Slider sliderSfx;
 
-    [Header("Clips de Acción")]
+    [Header("Clips")]
     [SerializeField] private AudioClip clipVuelo;
     [SerializeField] private AudioClip clipSuelo;
     [SerializeField] private AudioClip clipAtaque;
@@ -20,6 +22,13 @@ public class AudioSettingsController : MonoBehaviour
 
     private const string MUSIC_KEY = "MUSIC_VOL";
     private const string SFX_KEY = "SFX_VOL";
+
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
 
     private void Awake()
     {
@@ -56,11 +65,98 @@ public class AudioSettingsController : MonoBehaviour
     private void OnDestroy()
     {
         if (sliderMusic != null)
+        {
             sliderMusic.onValueChanged.RemoveListener(ApplyMusic);
+        }
 
         if (sliderSfx != null)
+        {
             sliderSfx.onValueChanged.RemoveListener(ApplySfx);
+        }
     }
+
+    #endregion
+
+    #region Public Methods
+
+    public void ApplyMusic(float value)
+    {
+        value = Mathf.Clamp01(value);
+
+        if (musicSource != null)
+        {
+            musicSource.volume = value;
+        }
+
+        PlayerPrefs.SetFloat(MUSIC_KEY, value);
+        PlayerPrefs.Save();
+    }
+
+    public void ApplySfx(float value)
+    {
+        value = Mathf.Clamp01(value);
+
+        if (sfxSource != null)
+        {
+            sfxSource.volume = value;
+        }
+
+        if (flySource != null)
+        {
+            flySource.volume = value;
+        }
+
+        PlayerPrefs.SetFloat(SFX_KEY, value);
+        PlayerPrefs.Save();
+    }
+
+    public void StartFly()
+    {
+        if (flySource == null || clipVuelo == null)
+        {
+            return;
+        }
+
+        if (!flySource.isPlaying)
+        {
+            flySource.Play();
+        }
+    }
+
+    public void StopFly()
+    {
+        if (flySource != null && flySource.isPlaying)
+        {
+            flySource.Stop();
+        }
+    }
+
+    public void PlaySuelo()
+    {
+        StopFly();
+        PlayEfecto(clipSuelo);
+    }
+
+    public void PlayAtaque()
+    {
+        PlayEfecto(clipAtaque);
+    }
+
+    public void PlayVictoria()
+    {
+        StopFly();
+
+        if (musicSource != null)
+        {
+            musicSource.Stop();
+        }
+
+        PlayEfecto(clipVictoria);
+    }
+
+    #endregion
+
+    #region Private Methods
 
     private void ConfigurarSources()
     {
@@ -84,72 +180,15 @@ public class AudioSettingsController : MonoBehaviour
         }
     }
 
-    public void ApplyMusic(float value)
-    {
-        value = Mathf.Clamp01(value);
-
-        if (musicSource != null)
-            musicSource.volume = value;
-
-        PlayerPrefs.SetFloat(MUSIC_KEY, value);
-        PlayerPrefs.Save();
-    }
-
-    public void ApplySfx(float value)
-    {
-        value = Mathf.Clamp01(value);
-
-        if (sfxSource != null)
-            sfxSource.volume = value;
-
-        if (flySource != null)
-            flySource.volume = value;
-
-        PlayerPrefs.SetFloat(SFX_KEY, value);
-        PlayerPrefs.Save();
-    }
-
-    public void StartFly()
-    {
-        if (flySource == null || clipVuelo == null)
-            return;
-
-        if (!flySource.isPlaying)
-            flySource.Play();
-    }
-
-    public void StopFly()
-    {
-        if (flySource != null && flySource.isPlaying)
-            flySource.Stop();
-    }
-
-    public void PlaySuelo()
-    {
-        StopFly();
-        PlayEfecto(clipSuelo);
-    }
-
-    public void PlayAtaque()
-    {
-        PlayEfecto(clipAtaque);
-    }
-
-    public void PlayVictoria()
-    {
-        StopFly();
-
-        if (musicSource != null)
-            musicSource.Stop();
-
-        PlayEfecto(clipVictoria);
-    }
-
     private void PlayEfecto(AudioClip clip)
     {
         if (sfxSource == null || clip == null)
+        {
             return;
+        }
 
         sfxSource.PlayOneShot(clip);
     }
+
+    #endregion
 }

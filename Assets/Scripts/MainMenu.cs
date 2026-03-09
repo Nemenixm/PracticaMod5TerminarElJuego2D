@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
+    #region Fields
+
     [Header("Paneles de Interfaz")]
     [SerializeField] private GameObject panelMain;
     [SerializeField] private GameObject panelAjustes;
@@ -11,11 +13,21 @@ public class MainMenu : MonoBehaviour
     [Header("Configuración")]
     [SerializeField] private string escenaJuego = "game";
 
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
+
     private void Start()
     {
-        // Aseguramos que al empezar solo se vea el menú principal
         RegresarAlMenu();
     }
+
+    #endregion
+
+    #region Public Methods
 
     public void Jugar()
     {
@@ -41,15 +53,30 @@ public class MainMenu : MonoBehaviour
     public void ConfirmarSalida()
     {
         Debug.Log("Saliendo del juego...");
-        Application.Quit(); 
-        // Nota: Application.Quit no funciona dentro del editor de Unity, solo en el build final.
+        Application.Quit();
     }
 
-    // Método auxiliar para no repetir código (DRY - Don't Repeat Yourself)
+    #endregion
+
+    #region Private Methods
+
     private void SetPanels(bool main, bool ajustes, bool salir)
     {
-        if(panelMain) panelMain.SetActive(main);
-        if(panelAjustes) panelAjustes.SetActive(ajustes);
-        if(panelSalir) panelSalir.SetActive(salir);
+        if (panelMain != null)
+        {
+            panelMain.SetActive(main);
+        }
+
+        if (panelAjustes != null)
+        {
+            panelAjustes.SetActive(ajustes);
+        }
+
+        if (panelSalir != null)
+        {
+            panelSalir.SetActive(salir);
+        }
     }
+
+    #endregion
 }

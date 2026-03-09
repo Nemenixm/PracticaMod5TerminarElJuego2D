@@ -3,7 +3,15 @@ using UnityEngine.InputSystem;
 
 public class ZonaSegura : MonoBehaviour
 {
-  private void OnTriggerEnter2D(Collider2D other)
+    #region Fields
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
@@ -15,8 +23,15 @@ public class ZonaSegura : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Vuelve a la capa por defecto (asegúrate de que tu Player sea "Default")
             other.gameObject.layer = LayerMask.NameToLayer("Default");
         }
     }
+
+    #endregion
+
+    #region Public Methods
+    #endregion
+
+    #region Private Methods
+    #endregion
 }

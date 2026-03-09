@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class skeleton : MonoBehaviour
 {
+    #region Fields
+
     [Header("Rangos")]
     public float visionRange = 10f;
     public float attackRange = 1.8f;
@@ -13,29 +15,42 @@ public class skeleton : MonoBehaviour
 
     [Header("Ataque")]
     public float attackCooldown = 1.2f;
+
     private float attackTimer = 0f;
     private bool isAttacking = false;
-
     private Animator anim;
     private Rigidbody2D rb;
     private Transform player;
     private bool isDead = false;
 
-    void Start()
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
+
+    private void Start()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
 
         GameObject p = GameObject.FindGameObjectWithTag("Player");
-        if (p != null) player = p.transform;
+
+        if (p != null)
+        {
+            player = p.transform;
+        }
     }
 
-    void Update()
+    private void Update()
     {
-        if (isDead || player == null) return;
+        if (isDead || player == null)
+        {
+            return;
+        }
 
         attackTimer -= Time.deltaTime;
-
         float distance = Vector2.Distance(transform.position, player.position);
 
         if (distance <= attackRange)
@@ -52,55 +67,26 @@ public class skeleton : MonoBehaviour
         }
     }
 
-    void Perseguir()
-    {
-        anim.SetBool("isRunning", true);
+    #endregion
 
-        float dir = Mathf.Sign(player.position.x - transform.position.x);
-        rb.linearVelocity = new Vector2(dir * moveSpeed, rb.linearVelocity.y);
-        transform.localScale = new Vector3(dir, 1, 1);
-    }
+    #region Public Methods
 
-    void Atacar()
-    {
-        rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isRunning", false);
-
-        // mirar al jugador antes de atacar
-        float dir = Mathf.Sign(player.position.x - transform.position.x);
-        if (dir != 0) transform.localScale = new Vector3(dir, 1, 1);
-
-        if (attackTimer <= 0f && !isAttacking)
-        {
-            isAttacking = true;
-            attackTimer = attackCooldown;
-            anim.SetTrigger("attack");
-            Debug.Log("Skeleton intenta atacar");
-        }
-    }
-
-    void IrAIdle()
-    {
-        rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isRunning", false);
-    }
-
-    // ESTE MÉTODO DEBE SER LLAMADO POR UN ANIMATION EVENT
     public void GolpeHacha()
     {
-        Debug.Log("GolpeHacha se ejecutó");
-
-        if (player == null) return;
+        if (player == null)
+        {
+            return;
+        }
 
         float distancia = Vector2.Distance(transform.position, player.position);
 
         if (distancia <= attackRange + 0.5f)
         {
             playerController pc = player.GetComponent<playerController>();
+
             if (pc != null)
             {
                 pc.TakeDamage(damage);
-                Debug.Log("Daño aplicado al player");
             }
             else
             {
@@ -109,7 +95,6 @@ public class skeleton : MonoBehaviour
         }
     }
 
-    // ESTE MÉTODO DEBE SER LLAMADO AL FINAL DE LA ANIMACIÓN DE ATAQUE
     public void FinAtaque()
     {
         isAttacking = false;
@@ -117,13 +102,59 @@ public class skeleton : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        if (isDead) return;
+        if (isDead)
+        {
+            return;
+        }
 
         health -= amount;
-        if (health <= 0) Die();
+
+        if (health <= 0f)
+        {
+            Die();
+        }
     }
 
-    void Die()
+    #endregion
+
+    #region Private Methods
+
+    private void Perseguir()
+    {
+        anim.SetBool("isRunning", true);
+
+        float dir = Mathf.Sign(player.position.x - transform.position.x);
+        rb.linearVelocity = new Vector2(dir * moveSpeed, rb.linearVelocity.y);
+        transform.localScale = new Vector3(dir, 1f, 1f);
+    }
+
+    private void Atacar()
+    {
+        rb.linearVelocity = Vector2.zero;
+        anim.SetBool("isRunning", false);
+
+        float dir = Mathf.Sign(player.position.x - transform.position.x);
+
+        if (dir != 0f)
+        {
+            transform.localScale = new Vector3(dir, 1f, 1f);
+        }
+
+        if (attackTimer <= 0f && !isAttacking)
+        {
+            isAttacking = true;
+            attackTimer = attackCooldown;
+            anim.SetTrigger("attack");
+        }
+    }
+
+    private void IrAIdle()
+    {
+        rb.linearVelocity = Vector2.zero;
+        anim.SetBool("isRunning", false);
+    }
+
+    private void Die()
     {
         isDead = true;
         rb.linearVelocity = Vector2.zero;
@@ -131,4 +162,6 @@ public class skeleton : MonoBehaviour
         GetComponent<Collider2D>().enabled = false;
         Destroy(gameObject, 3f);
     }
+
+    #endregion
 }

@@ -3,74 +3,119 @@ using UnityEngine.InputSystem;
 
 public class item : MonoBehaviour
 {
- 
-    public enum ItemType { VidaMas, VidaMenos, Power, TP }
+    #region Fields
+
+    public enum ItemType
+    {
+        VidaMas,
+        VidaMenos,
+        Power,
+        TP
+    }
+
     public ItemType tipo;
-    public Transform tpStartPoint; // Solo para el ítem TP
+    public Transform tpStartPoint;
 
     [Header("Ajustes de Velocidad")]
-    public float fallSpeed = 3f; // La velocidad será constante
+    public float fallSpeed = 3f;
+
     private Rigidbody2D rb;
+
+    #endregion
+
+    #region Properties
+    #endregion
+
+    #region Unity Callbacks
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        
-        // Ponemos la gravedad en 0 para que no acelere al caer
-        if (rb != null) rb.gravityScale = 0; 
+
+        if (rb != null)
+        {
+            rb.gravityScale = 0f;
+        }
     }
 
     private void FixedUpdate()
     {
-        // Aplicamos velocidad constante hacia abajo
-        if (rb != null) rb.linearVelocity = new Vector2(0, -fallSpeed);
+        if (rb != null)
+        {
+            rb.linearVelocity = new Vector2(0f, -fallSpeed);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            // SI ESTÁ EN ZONA SEGURA, NO HACE NADA (Añadido para evitar TP)
             if (other.gameObject.layer == LayerMask.NameToLayer("ZonaSegura"))
             {
-                return; 
+                return;
             }
 
             ApplyEffect(other.gameObject);
             Destroy(gameObject);
         }
-        
-        // Se destruye al tocar el suelo de abajo (Tag: Ground)
-        if (other.CompareTag("Ground")) Destroy(gameObject);
+
+        if (other.CompareTag("Ground"))
+        {
+            Destroy(gameObject);
+        }
     }
 
-    void ApplyEffect(GameObject player)
-{
-    playerHealth health = player.GetComponent<playerHealth>();
-    playerController controller = player.GetComponent<playerController>();
+    #endregion
 
-    switch (tipo)
+    #region Public Methods
+    #endregion
+
+    #region Private Methods
+
+    private void ApplyEffect(GameObject player)
     {
-        case ItemType.VidaMas: 
-            if (health != null) health.TakeDamage(-20); 
-            else Debug.LogWarning("El jugador no tiene el componente playerHealth");
-            break;
+        playerHealth health = player.GetComponent<playerHealth>();
+        playerController controller = player.GetComponent<playerController>();
 
-        case ItemType.VidaMenos: 
-            if (controller != null) controller.TakeDamage(30); 
-            else Debug.LogWarning("El jugador no tiene el componente playerController");
-            break; 
+        switch (tipo)
+        {
+            case ItemType.VidaMas:
+                if (health != null)
+                {
+                    health.TakeDamage(-20);
+                }
+                else
+                {
+                    Debug.LogWarning("El jugador no tiene el componente playerHealth");
+                }
+                break;
 
-        case ItemType.Power: 
-            if (controller != null) controller.AddResist(0.5f); 
-            break; 
+            case ItemType.VidaMenos:
+                if (controller != null)
+                {
+                    controller.TakeDamage(30);
+                }
+                else
+                {
+                    Debug.LogWarning("El jugador no tiene el componente playerController");
+                }
+                break;
 
-        case ItemType.TP: 
-            // Verificamos que el objeto player no sea nulo (por seguridad extra)
-            if (player != null) {
-                player.transform.position = tpStartPoint != null ? tpStartPoint.position : new Vector3(0,0,0); 
-            }
-            break;
+            case ItemType.Power:
+                if (controller != null)
+                {
+                    controller.AddResist(0.5f);
+                }
+                break;
+
+            case ItemType.TP:
+                if (player != null)
+                {
+                    player.transform.position = tpStartPoint != null ? tpStartPoint.position : Vector3.zero;
+                }
+                break;
+        }
     }
-}
+
+    #endregion
 }
